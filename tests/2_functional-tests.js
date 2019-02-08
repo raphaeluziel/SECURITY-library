@@ -13,13 +13,15 @@ var server = require('../server');
 
 chai.use(chaiHttp);
 
+var testId;
+
 suite('Functional Tests', function() {
 
   /*
   * ----[EXAMPLE TEST]----
   * Each test should completely test the response of the API end-point including response status code!
   */
-  
+  /*
   test('#example Test GET /api/books', function(done){
     assert.fail();
      chai.request(server)
@@ -33,7 +35,7 @@ suite('Functional Tests', function() {
         done();
       });  
   });
-  /*
+  
   * ----[END of EXAMPLE TEST]----
   */
 
@@ -53,6 +55,7 @@ suite('Functional Tests', function() {
             assert.property(res.body, 'title', 'should have property title');
             assert.isArray(res.body.comments, 'comments should be an array');
             assert.equal(res.body.title, 'Galapagos');
+            testId = res.body._id;
             done();
           });     
       });
@@ -83,7 +86,7 @@ suite('Functional Tests', function() {
           assert.property(res.body[0], 'commentcount', 'Books in array should contain commentcount');
           assert.property(res.body[0], 'title', 'Books in array should contain title');
           assert.property(res.body[0], '_id', 'Books in array should contain _id');
-        done();
+          done();
         });
       });      
     });
@@ -102,8 +105,18 @@ suite('Functional Tests', function() {
       });
       
       test('Test GET /api/books/[id] with valid id in db',  function(done){
-        assert.fail();
-        //done();
+        chai.request(server)
+        .get('/api/books/' + testId)
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          assert.isArray(res.body.comments, 'comments should be an array');
+          assert.property(res.body, 'commentcount');
+          assert.property(res.body, 'title');
+          assert.property(res.body, '_id');
+          assert.equal(res.body.title, 'Galapagos');
+          assert.equal(res.body._id, testId);
+          done();
+        });
       });
       
     });
@@ -112,8 +125,24 @@ suite('Functional Tests', function() {
     suite('POST /api/books/[id] => add comment/expect book object with id', function(){
       
       test('Test POST /api/books/[id] with comment', function(done){
-        assert.fail();
-        //done();
+        chai.request(server)
+          .post('/api/books/' + testId)
+          .send({
+            _id: testId,
+            comment: 'a cool comment'
+          })
+          .end(function(err, res){
+          console.log(testId);
+          console.log(res.body.title);
+            assert.equal(res.status, 200);
+            assert.property(res.body, 'comments');
+            assert.property(res.body, 'title');
+            assert.property(res.body, '_id');
+            assert.isArray(res.body.comments, 'comments should be an array');
+            assert.equal(res.body._id, testId);
+            assert.equal(res.body.comments[0], 'a cool comment');
+            done();
+          });    
       });
       
     });
