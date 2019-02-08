@@ -132,8 +132,6 @@ suite('Functional Tests', function() {
             comment: 'a cool comment'
           })
           .end(function(err, res){
-          console.log(testId);
-          console.log(res.body.title);
             assert.equal(res.status, 200);
             assert.property(res.body, 'comments');
             assert.property(res.body, 'title');
