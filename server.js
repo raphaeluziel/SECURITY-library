@@ -15,6 +15,8 @@ app.use('/public', express.static(process.cwd() + '/public'));
 
 app.use(helmet());
 app.use(helmet.noCache());
+app.use(helmet.hidePoweredBy({ setTo: 'PHP 4.2.0'}));
+
 app.use(cors({origin: '*'})); //USED FOR FCC TESTING PURPOSES ONLY!
 
 app.use(bodyParser.json());
